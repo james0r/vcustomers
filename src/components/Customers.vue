@@ -1,5 +1,7 @@
 <template>
   <div class="customers container">
+    <Alert v-if="alert" v-bind:message="alert" />
+
     <h1 class="page-header">Manage Customers</h1>
     <table class="table table-striped">
       <thead>
@@ -12,9 +14,9 @@
       </thead>
       <tbody>
         <tr v-for="customer in customers" :key="customer.id">
-          <td>{{ customer.first_name}}</td>
-          <td>{{ customer.last_name}}</td>
-          <td>{{ customer.email}}</td>
+          <td>{{ customer.first_name }}</td>
+          <td>{{ customer.last_name }}</td>
+          <td>{{ customer.email }}</td>
           <td></td>
         </tr>
       </tbody>
@@ -23,11 +25,14 @@
 </template>
 
 <script>
+import Alert from './Alert';
+
 export default {
   name: 'customers',
   data () {
     return {
-      customers: []
+      customers: [],
+      alert:''
     }
   },
   methods: {
@@ -40,6 +45,15 @@ export default {
   },
   created: function() {
     this.fetchCustomers();
+    if(this.$route.query.alert) {
+      this.alert = this.$route.query.alert;
+    }
+  },
+  updated: function() {
+    this.fetchCustomers();
+  },
+  components: {
+    Alert
   }
 }
 </script>

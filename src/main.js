@@ -6,6 +6,7 @@ import VueRouter from 'vue-router'
 import vueResource from 'vue-resource'
 import Customers from './components/Customers'
 import About from './components/About'
+import Add from './components/Add'
 
 Vue.use(vueResource)
 Vue.use(VueRouter)
@@ -15,7 +16,8 @@ const router = new VueRouter ({
   base: __dirname,
   routes: [
     {path:'/', component: Customers},
-    {path: '/about', component: About}
+    {path: '/about', component: About},
+    {path: '/add', component: Add}
   ]
 });
 
@@ -41,13 +43,13 @@ new Vue({
           <a class="nav-link" href="#"><router-link to="/about">About</router-link></a>
           </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+        <ul class="navbar-nav navbar-right">
+          <li class="nav-item">
+            <a class="nav-link" href="#"><router-link to="/add">Add Customer</router-link></a>
+          </li>
+        </ul>
       </div>
     </nav>
-    <router-link to="/about">About</router-link>
       <router-view></router-view>
     </div>
   `
