@@ -2,7 +2,10 @@
   <div class="details container">
       <router-link to="/">Back</router-link>
     <h1 class="page-header">{{ customer.first_name }} {{ customer.last_name }}
-        <span class="float-right"><button class="btn-danger btn" v-on:click="deleteCustomer(customer.id)">Delete</button></span>
+        <span class="float-right">
+            <router-link class="btn btn-primary" v-bind:to="'/edit/'+customer.id">Edit</router-link>
+            <button class="btn-danger btn" v-on:click="deleteCustomer(customer.id)">Delete</button>
+        </span>
     </h1>
     <ul class="list-group">
             <li class="list-group-item"><span class="fas fa-phone-square" aria-hidden="true"></span> {{customer.phone}}</li>
