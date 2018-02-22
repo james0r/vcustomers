@@ -3,6 +3,8 @@
     <Alert v-if="alert" v-bind:message="alert" />
 
     <h1 class="page-header">Manage Customers</h1>
+    <input type="text" class="form-control" placeholder="Enter Last Name" v-model="filterInput">
+    <br />
     <table class="table table-striped">
       <thead>
         <tr>
@@ -13,7 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="customer in customers" :key="customer.id">
+        <tr v-for="customer in filterBy(customers, filterInput)" :key="customer.id">
           <td>{{ customer.first_name }}</td>
           <td>{{ customer.last_name }}</td>
           <td>{{ customer.email }}</td>
@@ -33,7 +35,8 @@ export default {
   data () {
     return {
       customers: [],
-      alert:''
+      alert:'',
+      filterInput:""
     }
   },
   methods: {
@@ -41,6 +44,12 @@ export default {
       this.$http.get('http://slimapp/api/customers')
       .then(function(response){
         this.customers = response.body;
+      });
+    },
+    filterBy(list, value) {
+      value = value.charAt(0).toUpperCase() + value.slice(1);
+      return list.filter(function(customer){
+        return customer.last_name.indexOf(value) > -1;
       });
     }
   },
