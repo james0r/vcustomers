@@ -2,7 +2,7 @@
   <div class="edit container">
       <Alert v-if="alert" v-bind:message="alert"/>
     <h1 class="page-header">Edit Customer</h1>
-    <form v-on:submit="updateCustomer">
+    <form v-on:submit.prevent="updateCustomer">
          <div class="well">
             <h4>Customer Info</h4>
             <div class="form-group">
@@ -48,21 +48,33 @@
 
 <script>
 import Alert from './Alert'
+import db from './firebaseInit'
 
 export default {
-  name: 'add',
+  name: 'edit',
   data () {
     return {
         customer: {},
-        alert:''
+        alert:'',
+        slug: null
     }
   },
   methods: {
-      fetchCustomer(id) {
-          this.$http.get('http://slimapp/api/customer/'+id)
-        .then(function(response){
-            this.customer = response.body;
-        });
+      fetchCustomer(slug) {
+          console.log("this is what's being passed as slug to fetchCustomers: " + slug);
+        db.collection('contacts').where('slug', '==', slug).get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            console.log(doc.id, ' => ', doc.data())
+            this.customer.first_name = doc.data().first_name
+            this.customer.last_name = doc.data().last_name
+            this.customer.phone = doc.data().phone
+            this.customer.email = doc.data().email
+            this.customer.address = doc.data().address
+            this.customer.city = doc.data().city
+            this.customer.state = doc.data().state
+            this.customer.slug = slug
+          })
+        })
       },
       updateCustomer(e) {
         if(!this.customer.first_name || !this.customer.last_name || !this.customer.email) {
@@ -78,17 +90,20 @@ export default {
                 state: this.customer.state
             }
 
-            this.$http.put('http://slimapp/api/customer/update/'+this.$route.params.id, updCustomer)
-                .then(function(response){
-                    this.$router.push({path: '/', query: {alert: 'Customer Updated'}});
-                });
-            e.preventDefault();
+            this.$router.push({path: '/', query: {alert: 'Customer Updated'}});
+
+            // this.$http.put('http://slimapp/api/customer/update/'+this.$route.params.id, updCustomer)
+            //     .then(function(response){
+            //         this.$router.push({path: '/', query: {alert: 'Customer Updated'}});
+            //     });
+            // e.preventDefault();
         }
-        e.preventDefault();
+        // e.preventDefault();
       }
   },
   created: function() {
-      this.fetchCustomer(this.$route.params.id);
+      console.log("This has been past through route params as slug: " + this.$route.params.slug);
+      this.fetchCustomer(this.$route.params.slug);
   },
   component: {
       Alert

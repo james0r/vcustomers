@@ -19,7 +19,7 @@
           <td>{{ customer.first_name }}</td>
           <td>{{ customer.last_name }}</td>
           <td>{{ customer.email }}</td>
-          <td><router-link class="btn btn-default" v-bind:to="'/customer/'+customer.id">View</router-link></td>
+          <td><router-link class="btn btn-default" v-bind:to="{ path: '/customer/'+customer.slug, params: {customer: customer.slug} }">View</router-link></td>
           <td></td>
         </tr>
       </tbody>
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import db from './firebaseInit'
 import Alert from './Alert';
 
 export default {
@@ -41,10 +42,29 @@ export default {
   },
   methods: {
     fetchCustomers() {
-      this.$http.get('http://slimapp/api/customers')
-      .then(function(response){
-        this.customers = response.body;
-      });
+      db.collection('contacts').get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          let data = {
+            'id': doc.id,
+            'first_name': doc.data().first_name,
+            'last_name': doc.data().last_name,
+            'phone': doc.data().phone,
+            'email': doc.data().email,
+            'address': doc.data().address,
+            'city': doc.data().city,
+            'state': doc.data().state,
+            'slug': doc.data().slug
+          }
+          console.log("fetchCustomers ran, data return as:" + data);
+
+          this.customers.push(data);
+        })
+      })
+
+      // this.$http.get('http://slimapp/api/customers')
+      // .then(function(response){
+      //   this.customers = response.body;
+      // });
     },
     filterBy(list, value) {
       value = value.charAt(0).toUpperCase() + value.slice(1);
@@ -60,7 +80,7 @@ export default {
     }
   },
   updated: function() {
-    this.fetchCustomers();
+    // this.fetchCustomers();
   },
   components: {
     Alert
